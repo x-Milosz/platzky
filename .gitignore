@@ -1,0 +1,4 @@
+dist
+.coverage
+**/__pycache__
+*.config.json

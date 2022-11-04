@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "platzky"
+version = "0.1.15"
+description = "Another blog in python"
+authors = []
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+humanize = "^4.3.0"
+Flask = "^2.2.2"
+PyYAML = "^6.0"
+Flask-Babel = "^2.0.0"
+Flask-WTF = "^1.0.1"
+gql = "^3.4.0"
+aiohttp = "^3.8.3"
+Flask-Markdown = "^0.3"
+Flask-Minify = "^0.39"
+google-cloud-storage = "^2.5.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.1.3"
+coverage = "^6.4.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

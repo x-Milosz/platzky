@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+
+  <channel>
+    <title>{{_("Which mailing?")}}</title>
+    <link>{{ url_for("index", _external=True) }}</link>
+    <description>{{_("Everything about mailings and newsletters")}}</description>
+    {% for post in posts %}
+    <item>
+      <title>{{ post.title }}</title>
+      <link>{{ url_for("get_post", post_slug=post.slug, _external=True) }}</link>
+      <description>{{ post.excerpt }}</description>
+      <enclosure url="{{ post.coverImage.url }}" type="image/jpeg" />
+      <guid isPermaLink="false">{{ url_for("get_post", post_slug=post.slug, _external=True) }}</guid>
+      <pubDate>{{ post.createdAt }}</pubDate>
+      <source url="{{ url_for('get_post', post_slug=post.slug, _external=True) }}">{{_("Which mailing")}} feed</source>
+    </item>
+    {% endfor %}
+
+  </channel>
+
+</rss>
