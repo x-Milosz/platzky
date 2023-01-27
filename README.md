@@ -3,7 +3,12 @@
 
 # platzky
 
-Blog engine in python 
+Blog engine in python
+
+# How to run?
+
+1. Install platzky with your favorite dependency management tool (`pip install platzky`)
+2. run `flask --app "platzky:create_app(PATH_TO_YOUR_CONFIG_FILE)" run`
 
 ## Configuration
 

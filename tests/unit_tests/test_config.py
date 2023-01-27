@@ -1,4 +1,4 @@
-from platzky.config import *
+from platzky.config import from_mapping, Config
 import pytest
 
 
@@ -9,7 +9,7 @@ def test_config_creation_with_incorrect_mappings():
         "db_type_wrong": {'DB': {'TYPE': 'wrong-type'}}
     }
 
-    for mapping in wrong_mappings:
+    for title, mapping in wrong_mappings.items():
         with pytest.raises(Exception):
             from_mapping(mapping)
 

@@ -27,7 +27,7 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="languages-menu" role="button"
                data-bs-toggle="dropdown" aria-expanded="false">
-              <i class=" {{ languages[language]['flag'] }} flag"></i></a>
+              <i class=" {{ current_flag }} flag"></i></a>
             <ul class="dropdown-menu" aria-labelledby="languages-menu">
               {% for lg,items in languages.items() %}
               <li><a class="dropdown-item" href={{url_for('change_language', lang=lg, _external=True)}}>
