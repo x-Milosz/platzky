@@ -1,21 +1,21 @@
-from platzky.config import from_mapping, Config
+from platzky.config import Config, languages_dict
+
 import pytest
 
 
-def test_config_creation_with_incorrect_mappings():
-    wrong_mappings = {
-        "empty_mapping": {},
-        "db_without_type": {'DB': 'anything'},
-        "db_type_wrong": {'DB': {'TYPE': 'wrong-type'}}
+def test_parse_template_config() -> None:
+    """Test that the template config can be parsed."""
+    config = Config.parse_yaml("config-template.yml")
+    langs_dict = languages_dict(config.languages)
+
+    wanted_dict = {
+        "en": {"domain": None, "flag": "uk", "name": "English"},
+        "pl": {"domain": None, "flag": "pl", "name": "polski"},
     }
-
-    for title, mapping in wrong_mappings.items():
-        with pytest.raises(Exception):
-            from_mapping(mapping)
+    assert langs_dict == wanted_dict
 
 
-def test_config_creation_from_file():
-    not_empty_dict = {'DB': {'TYPE': 'json_file',
-                             "PATH": "./tests/e2e_tests/db.json"}}
-    config = from_mapping(not_empty_dict)
-    assert type(config) == Config
+def test_parse_non_existing_config_file() -> None:
+    """Assure that parsing a non-existing config file raises an error and exits application."""
+    with pytest.raises(SystemExit):
+        Config.parse_yaml("non-existing-file.yml")

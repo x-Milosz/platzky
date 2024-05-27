@@ -1,63 +1,66 @@
-import os.path
+import sys
+import typing as t
 import yaml
+from pydantic import ConfigDict, BaseModel, Field
+
+from .db.db import DBConfig
+from .db.db_loader import get_db_module
 
 
-def is_db_ok(mapping):
-    if 'DB' not in mapping:
-        raise Exception("DB not set")
-    if 'TYPE' not in mapping['DB']:
-        raise Exception("DB type is not set")
-    if mapping['DB']['TYPE'] not in ['graph_ql', 'json_file', 'google_json']:
-        raise Exception("DB type is not supported")
-    return True
+class StrictBaseModel(BaseModel):
+    model_config = ConfigDict(frozen=True)
 
 
-class Config():
-    def __init__(self, mapping):
-        if is_db_ok(mapping):
-            self.config = mapping
-        else:
-            raise Exception("Config is wrong")
-
-    def add_translations_dir(self, absolute_translation_dir):
-        self.config["BABEL_TRANSLATION_DIRECTORIES"] += ";" + absolute_translation_dir
-
-    def asdict(self):
-        return self.config
+class LanguageConfig(StrictBaseModel):
+    name: str = Field(alias="name")
+    flag: str = Field(alias="flag")
+    domain: t.Optional[str] = Field(default=None, alias="domain")
 
 
-def get_config_mapping(base_config):
-    default_config = {  # TODO move it to platzky
-        "USE_WWW": True,
-        "SEO_PREFIX": "/",
-        "BLOG_PREFIX": "/",
-        "LANGUAGES": {},
-        "DOMAIN_TO_LANG": {},
-        "PLUGINS": []
-    }
-
-    config = default_config | base_config
-    babel_format_dir = ";".join(config.get("TRANSLATION_DIRECTORIES", []))
-    config["BABEL_TRANSLATION_DIRECTORIES"] = babel_format_dir
-    return config
+Languages = dict[str, LanguageConfig]
+LanguagesMapping = t.Mapping[str, t.Mapping[str, str]]
 
 
-def from_file(absolute_config_path):
-    with open(absolute_config_path, "r") as stream:
-        file_config = yaml.safe_load(stream)
-    file_config["CONFIG_PATH"] = absolute_config_path
-    config_from_file = from_mapping(file_config)
-    config_directory = os.path.dirname(absolute_config_path)
-    for x in ["locales", "locale", "translations"]:
-        translation_directory = os.path.join(config_directory, x)
-        config_from_file.add_translations_dir(translation_directory)
-
-    path_to_module_locale = os.path.join(os.path.dirname(__file__), "./locale")
-    config_from_file.add_translations_dir(path_to_module_locale)
-
-    return config_from_file
+def languages_dict(languages: Languages) -> LanguagesMapping:
+    return {name: lang.model_dump() for name, lang in languages.items()}
 
 
-def from_mapping(mapping):
-    config_dict = get_config_mapping(mapping)
-    return Config(config_dict)
+class Config(StrictBaseModel):
+    app_name: str = Field(alias="APP_NAME")
+    secret_key: str = Field(alias="SECRET_KEY")
+    db: DBConfig = Field(alias="DB")
+    use_www: bool = Field(default=True, alias="USE_WWW")
+    seo_prefix: str = Field(default="/", alias="SEO_PREFIX")
+    blog_prefix: str = Field(default="/", alias="BLOG_PREFIX")
+    languages: Languages = Field(default_factory=dict, alias="LANGUAGES")
+    domain_to_lang: dict[str, str] = Field(default_factory=dict, alias="DOMAIN_TO_LANG")
+    translation_directories: list[str] = Field(
+        default_factory=list,
+        alias="TRANSLATION_DIRECTORIES",
+    )
+    debug: bool = Field(default=False, alias="DEBUG")
+    testing: bool = Field(default=False, alias="TESTING")
+
+    @classmethod
+    def model_validate(
+        cls,
+        obj: t.Any,
+        *,
+        strict: bool | None = None,
+        from_attributes: bool | None = None,
+        context: dict[str, t.Any] | None = None,
+    ) -> "Config":
+        db_cfg_type = get_db_module(obj["DB"]["TYPE"]).db_config_type()
+        obj["DB"] = db_cfg_type.model_validate(obj["DB"])
+        return super().model_validate(
+            obj, strict=strict, from_attributes=from_attributes, context=context
+        )
+
+    @classmethod
+    def parse_yaml(cls, path: str) -> "Config":
+        try:
+            with open(path, "r") as f:
+                return cls.model_validate(yaml.safe_load(f))
+        except FileNotFoundError:
+            print(f"Config file not found: {path}", file=sys.stderr)
+            raise SystemExit(1)

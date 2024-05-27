@@ -1,17 +1,21 @@
 from flask import redirect
-from functools import partial
 from gql import gql
+from pydantic import BaseModel
 
 
-def json_get_redirections(self):
+def json_db_get_redirections(self):
     return self.data.get("redirections", {})
 
 
-def google_get_redirections(self):
+def json_file_db_get_redirections(self):
+    return json_db_get_redirections(self)
+
+
+def google_json_db_get_redirections(self):
     return self.data.get("redirections", {})
 
 
-def graphql_get_redirections(self):
+def graph_ql_db_get_redirections(self):
     redirections = gql(
         """
         query MyQuery{
@@ -22,25 +26,43 @@ def graphql_get_redirections(self):
         }
         """
     )
-    return {x['source']:x['destination'] for x in self.client.execute(redirections)['redirections']}
-
-
-def get_proper_redirections(db_type):
-    redirections = {
-        "json_file": json_get_redirections,
-        "graph_ql": graphql_get_redirections,
-        "google_json": google_get_redirections
-
+    return {
+        x["source"]: x["destination"]
+        for x in self.client.execute(redirections)["redirections"]
     }
-    return redirections[db_type]
 
 
-def process(app):
-    app.db.get_redirections = get_proper_redirections(app.config["DB"]["TYPE"])
-    redirects = app.db.get_redirections(app.db)
-    for source, destiny in redirects.items():
-        func = partial(redirect, destiny, code=301)
-        func.__name__ = f"{source}-{destiny}"
-        app.route(rule=source)(func)
+class Redirection(BaseModel):
+    source: str
+    destiny: str
 
+
+def parse_redirections(config: dict) -> list[Redirection]:
+    return [
+        Redirection(source=source, destiny=destiny)
+        for source, destiny in config.items()
+    ]
+
+
+def setup_routes(app, redirections):
+    for redirection in redirections:
+        func = redirect_with_name(
+            redirection.destiny,
+            code=301,
+            name=f"{redirection.source}-{redirection.destiny}",
+        )
+        app.route(rule=redirection.source)(func)
+
+
+def redirect_with_name(destiny, code, name):
+    def named_redirect(*args, **kwargs):
+        return redirect(destiny, code, *args, **kwargs)
+
+    named_redirect.__name__ = name
+    return named_redirect
+
+
+def process(app, config: dict) -> object:
+    redirections = parse_redirections(config)
+    setup_routes(app, redirections)
     return app

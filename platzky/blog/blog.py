@@ -1,15 +1,19 @@
-from flask import request, render_template,\
-    make_response, Blueprint, Markup
-from platzky.blog import comment_form, post_formatter
 from os.path import dirname
 
+from flask import Blueprint, make_response, render_template, request
+from markupsafe import Markup
 
-def create_blog_blueprint(db, config, babel):
-    url_prefix = config["BLOG_PREFIX"]
-    blog = Blueprint('blog', __name__, url_prefix=url_prefix, template_folder=f'{dirname(__file__)}/../templates')
+from . import comment_form
 
-    def locale():
-        return babel.locale_selector_func()
+
+def create_blog_blueprint(db, blog_prefix: str, locale_func):
+    url_prefix = blog_prefix
+    blog = Blueprint(
+        "blog",
+        __name__,
+        url_prefix=url_prefix,
+        template_folder=f"{dirname(__file__)}/../templates",
+    )
 
     @blog.app_template_filter()
     def markdown(text):
@@ -17,50 +21,72 @@ def create_blog_blueprint(db, config, babel):
 
     @blog.errorhandler(404)
     def page_not_found(e):
-        return render_template('404.html', title='404'), 404
+        return render_template("404.html", title="404"), 404
 
-    @blog.route('/', methods=["GET"])
-    def index():
-        lang = locale()
-        return render_template("blog.html", posts=db.get_all_posts(lang))
+    @blog.route("/", methods=["GET"])
+    def all_posts():
+        lang = locale_func()
+        posts = db.get_all_posts(lang)
+        if not posts:
+            return page_not_found("no posts")
+        posts_sorted = sorted(posts, reverse=True)
+        return render_template("blog.html", posts=posts_sorted)
 
-    @blog.route('/feed', methods=["GET"])
+    @blog.route("/feed", methods=["GET"])
     def get_feed():
-        lang = locale()
-        response = make_response(render_template("feed.xml", posts=db.get_all_posts(lang)))
+        lang = locale_func()
+        response = make_response(
+            render_template("feed.xml", posts=db.get_all_posts(lang))
+        )
         response.headers["Content-Type"] = "application/xml"
         return response
 
-    @blog.route('/<post_slug>', methods=["POST"])
+    @blog.route("/<post_slug>", methods=["POST"])
     def post_comment(post_slug):
         comment = request.form.to_dict()
-        db.add_comment(post_slug=post_slug, author_name=comment["author_name"],
-                       comment=comment["comment"])
+        db.add_comment(
+            post_slug=post_slug,
+            author_name=comment["author_name"],
+            comment=comment["comment"],
+        )
         return get_post(post_slug=post_slug)
 
-    @blog.route('/<post_slug>', methods=["GET"])
+    @blog.route("/<post_slug>", methods=["GET"])
     def get_post(post_slug):
-        if raw_post := db.get_post(post_slug):
-            formatted_post = post_formatter.format_post(raw_post)
-            return render_template("post.html", post=formatted_post, post_slug=post_slug,
-                                   form=comment_form.CommentForm(), comment_sent=request.args.get('comment_sent'))
-        else:
-            return page_not_found("no such page")
+        post = db.get_post(post_slug)
+        try:
+            post = db.get_post(post_slug)
+            return render_template(
+                "post.html",
+                post=post,
+                post_slug=post_slug,
+                form=comment_form.CommentForm(),
+                comment_sent=request.args.get("comment_sent"),
+            )
+        except ValueError:
+            return page_not_found(f"no post with slug {post_slug}")
+        except Exception as e:
+            return page_not_found(str(e))
 
-    @blog.route('/page/<path:page_slug>', methods=["GET"])
-    def get_page(page_slug):  # TODO refactor to share code with get_post since they are very similar
-        if page := db.get_page(page_slug):
-            if cover_image := page.get("coverImage"):
-                cover_image_url = cover_image["url"]
+    @blog.route("/page/<path:page_slug>", methods=["GET"])
+    def get_page(
+        page_slug,
+    ):  # TODO refactor to share code with get_post since they are very similar
+        try:
+            page = db.get_page(page_slug)
+            if cover_image := page.coverImage:
+                cover_image_url = cover_image.url
             else:
                 cover_image_url = None
             return render_template("page.html", page=page, cover_image=cover_image_url)
-        else:
-            return page_not_found("no such page")
+        except ValueError:
+            return page_not_found("no page with slug {page_slug}")
+        except Exception as e:
+            return page_not_found(str(e))
 
-    @blog.route('/tag/<path:tag>', methods=["GET"])
+    @blog.route("/tag/<path:tag>", methods=["GET"])
     def get_posts_from_tag(tag):
-        lang = locale()
+        lang = locale_func()
         posts = db.get_posts_by_tag(tag, lang)
         return render_template("blog.html", posts=posts, subtitle=f" - tag: {tag}")
 

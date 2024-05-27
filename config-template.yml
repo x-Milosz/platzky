@@ -1,0 +1,30 @@
+# -- Basic app configuration
+APP_NAME: My awesome platzky application
+
+SECRET_KEY: secret
+## -- Flask's SECRET_KEY. In production environment you should set it and keep secret.
+## -- Ref: https://flask.palletsprojects.com/en/2.1.x/config/
+# flask_secretkey: YOU SHOULD CHANGE IT!!!
+
+## -- Languages supported by application
+## -- First language would be used as default
+LANGUAGES:
+  en:
+    name: English
+    flag: uk
+  pl:
+    name: polski
+    flag: pl
+
+# -- Database configuration
+
+## -- DB stored in simple json file
+DB:
+  TYPE: json_file
+  PATH: data.json
+
+## -- DB stored in google cloud storage as json.
+# DB:
+#   TYPE: google_hosted_json_file
+#   BUCKET_NAME: good-map
+#   SOURCE_BLOB_NAME: data.json

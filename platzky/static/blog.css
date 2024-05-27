@@ -81,29 +81,22 @@ img::-moz-selection {
     background: transparent;
 }
 
-#mainNav {
-#    position: absolute;
-#    border-bottom: 1px solid #e9ecef;
-#    background-color: white;
-    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
 #mainNav .navbar-brand {
-    font-weight: 800;
+    font-weight: 1000;
     color: #343a40;
 }
 
 #mainNav .navbar-toggler {
-    font-size: 12px;
+    font-size: 20px;
     font-weight: 800;
-    padding: 13px;
+    padding: 10px;
     text-transform: uppercase;
     color: #343a40;
 }
 
 #mainNav .navbar-nav > li.nav-item > a {
-    font-size: 12px;
-    font-weight: 800;
+    font-size: 15px;
+    font-weight: 1000;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
