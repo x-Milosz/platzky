@@ -14,7 +14,7 @@ class DB(ABC):
 
     def __init_subclass__(cls, *args, **kw):
         """Check that all methods defined in the subclass exist in the superclasses.
-        This is to prevent subclasses from adding new methods to the DB object.
+        This is to prevent subclasses from splitting up DB interface.
         """
         super().__init_subclass__(*args, **kw)
         for name in cls.__dict__:
@@ -88,10 +88,6 @@ class DB(ABC):
 
     @abstractmethod
     def get_font(self) -> str:
-        pass
-
-    @abstractmethod
-    def get_site_content(self) -> str:
         pass
 
 
