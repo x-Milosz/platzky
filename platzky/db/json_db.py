@@ -77,6 +77,9 @@ class Json(DB):
     def get_logo_url(self):
         return self._get_site_content().get("logo_url", "")
 
+    def get_favicon_url(self):
+        return self._get_site_content().get("favicon_url", "")
+
     def get_font(self) -> str:
         return self._get_site_content().get("font", "")
 

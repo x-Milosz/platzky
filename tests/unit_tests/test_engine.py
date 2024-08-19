@@ -1,6 +1,6 @@
 import pytest
 from flask import Flask
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from platzky.config import Config
 from platzky.platzky import create_app_from_config
 
@@ -17,6 +17,7 @@ def test_app():
             "TYPE": "json",
             "DATA": {
                 "site_content": {
+                    "logo_url": "https://example.com/logo.png",
                     "pages": [
                         {
                             "title": "test",
@@ -51,6 +52,39 @@ def test_babel_gets_proper_directories(test_app):
         ]
 
 
+def test_logo_has_set_src(test_app):
+    app = test_app.test_client()
+    response = app.get("/")
+    soup = BeautifulSoup(response.data, "html.parser")
+    found_image = soup.find("img")
+    assert isinstance(found_image, Tag)
+    assert found_image.get("src") is not None
+    assert found_image.get("src") == "https://example.com/logo.png"
+
+
+def test_if_name_is_shown_if_there_is_no_logo(test_app):
+    test_app.db.data["site_content"].pop("logo_url")
+    app = test_app.test_client()
+    response = app.get("/")
+    soup = BeautifulSoup(response.data, "html.parser")
+    assert soup.find("img") is None
+    branding = soup.find("a", {"class": "navbar-brand"})
+    assert branding is not None
+    assert branding.get_text() == "testing App Name"
+
+
+def test_favicon_is_applied(test_app):
+    test_app.db.data["site_content"]["favicon_url"] = "https://example.com/favicon.ico"
+    app = test_app.test_client()
+    response = app.get("/")
+    soup = BeautifulSoup(response.data, "html.parser")
+    found_ico = soup.find("link", rel="icon")
+    assert found_ico is not None
+    assert isinstance(found_ico, Tag)
+    assert found_ico.get("href") is not None
+    assert found_ico.get("href") == "https://example.com/favicon.ico"
+
+
 def test_notifier(test_app):
     engine = test_app
     notifier_msg = None
@@ -73,10 +107,9 @@ def test_dynamic_content(test_app, content_type):
         soup = BeautifulSoup(response.data, "html.parser")
         return getattr(soup, content_type).get_text()
 
-    engine = test_app
-    add_dynamic_element(engine, "test1")
-    add_dynamic_element(engine, "test2")
-    app = engine.test_client()
+    add_dynamic_element(test_app, "test1")
+    add_dynamic_element(test_app, "test2")
+    app = test_app.test_client()
     response = app.get("/blog/page/test")
     content = get_content_text(response, content_type)
     assert "test1" in content

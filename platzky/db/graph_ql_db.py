@@ -224,7 +224,39 @@ class GraphQL(DB):
         return str("")
 
     def get_logo_url(self):
-        return ""
+        logo = gql(
+            """
+            query myquery {
+              logos(stage: PUBLISHED) {
+              logo {
+                  alternateText
+                  image {
+                    url
+                  }
+                }
+              }
+            }
+            """
+        )
+        try:
+            return self.client.execute(logo)["logos"][0]["logo"]["image"]["url"]
+        except IndexError:
+            return ""
+
+    def get_favicon_url(self):
+        favicon = gql(
+            """
+            query myquery {
+              favicons(stage: PUBLISHED) {
+              favicon {
+                url
+                }
+              }
+            }
+            """
+        )
+
+        return self.client.execute(favicon)["favicons"][0]["favicon"]["url"]
 
     def get_primary_color(self) -> Color:
         return Color()

@@ -71,7 +71,13 @@ class DB(ABC):
         pass
 
     @abstractmethod
-    def get_logo_url(self) -> str:
+    def get_logo_url(
+        self,
+    ) -> str:  # TODO provide alternative text along with the URL of logo
+        pass
+
+    @abstractmethod
+    def get_favicon_url(self) -> str:
         pass
 
     @abstractmethod

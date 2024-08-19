@@ -87,12 +87,6 @@ def create_engine(config: Config, db) -> Engine:
             session["language"] = lang
             return redirect(request.referrer)
 
-    @app.route("/logo", methods=["GET"])
-    def logo():
-        return redirect(
-            "https://www.problematy.pl/wp-content/uploads/2023/08/kolor_poziom.png"
-        )
-
     def url_link(x: str) -> str:
         return urllib.parse.quote(x, safe="")
 
@@ -108,6 +102,7 @@ def create_engine(config: Config, db) -> Engine:
             "url_link": url_link,
             "menu_items": app.db.get_menu_items(),
             "logo_url": app.db.get_logo_url(),
+            "favicon_url": app.db.get_favicon_url(),
             "font": app.db.get_font(),
             "primary_color": app.db.get_primary_color(),
             "secondary_color": app.db.get_secondary_color(),
