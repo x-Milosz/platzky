@@ -7,15 +7,12 @@
 from unittest.mock import MagicMock
 
 import pytest
+from freezegun import freeze_time
 
 from platzky.blog import blog
 from platzky.config import Config
+from platzky.models import Comment, Image, Post
 from platzky.platzky import create_engine
-from platzky.models import Post, Image
-
-from freezegun import freeze_time
-
-from platzky.models import Comment
 
 mocked_post_json = {
     "title": "post title",
@@ -56,9 +53,7 @@ def test_app():
             "USE_WWW": False,
             "SEO_PREFIX": "/",
             "APP_NAME": "app name",
-            "LANGUAGES": {
-                "en": {"name": "English", "flag": "uk", "domain": "localhost"}
-            },
+            "LANGUAGES": {"en": {"name": "English", "flag": "uk", "domain": "localhost"}},
             "DOMAIN_TO_LANG": {"localhost": "en"},
             "DB": {"TYPE": "json_file", "PATH": ""},
             "DEBUG": True,
@@ -66,9 +61,7 @@ def test_app():
         }
     )
     app = create_engine(config, db_mock)
-    blog_blueprint = blog.create_blog_blueprint(
-        db_mock, config.blog_prefix, app.get_locale
-    )
+    blog_blueprint = blog.create_blog_blueprint(db_mock, config.blog_prefix, app.get_locale)
 
     app.register_blueprint(blog_blueprint)
     return app.test_client()

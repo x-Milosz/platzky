@@ -1,6 +1,6 @@
-from platzky.config import Config, languages_dict
-
 import pytest
+
+from platzky.config import Config, languages_dict
 
 
 def test_parse_template_config() -> None:

@@ -1,5 +1,6 @@
-from platzky.models import Post, Color, Image
 import pytest
+
+from platzky.models import Color, Image, Post
 
 
 def test_posts_are_sorted_by_date():

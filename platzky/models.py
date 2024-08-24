@@ -1,6 +1,7 @@
-from pydantic import BaseModel
 import datetime
+
 import humanize
+from pydantic import BaseModel
 
 
 class Image(BaseModel):

@@ -1,7 +1,8 @@
 import sys
 import typing as t
+
 import yaml
-from pydantic import ConfigDict, BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from .db.db import DBConfig
 from .db.db_loader import get_db_module

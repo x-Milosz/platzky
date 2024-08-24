@@ -1,6 +1,7 @@
 import pytest
-from flask import Flask
 from bs4 import BeautifulSoup, Tag
+from flask import Flask
+
 from platzky.config import Config
 from platzky.platzky import create_app_from_config
 
@@ -47,9 +48,7 @@ def test_app():
 
 def test_babel_gets_proper_directories(test_app):
     with test_app.app_context():
-        assert list(test_app.babel.domain_instance.translation_directories) == [
-            "/some/fake/dir"
-        ]
+        assert list(test_app.babel.domain_instance.translation_directories) == ["/some/fake/dir"]
 
 
 def test_logo_has_set_src(test_app):
@@ -128,9 +127,7 @@ def test_www_redirects(test_app, use_www):
             "TYPE": "json",
             "DATA": {
                 "site_content": {
-                    "pages": [
-                        {"title": "test", "slug": "test", "contentInMarkdown": "test"}
-                    ],
+                    "pages": [{"title": "test", "slug": "test", "contentInMarkdown": "test"}],
                 }
             },
         },
@@ -160,9 +157,7 @@ def test_that_default_page_title_is_app_name(test_app):
     assert soup.title.string == "testing App Name"
 
 
-@pytest.mark.parametrize(
-    "tag, subtag, value", [("link", "hreflang", "en"), ("html", "lang", "en")]
-)
+@pytest.mark.parametrize("tag, subtag, value", [("link", "hreflang", "en"), ("html", "lang", "en")])
 def test_that_tag_has_proper_value(test_app, tag, subtag, value):
     response = test_app.test_client().get("/")
     soup = BeautifulSoup(response.data, "html.parser")

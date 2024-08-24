@@ -1,10 +1,12 @@
-from platzky.config import Config
 import copy
+from typing import Any, Dict
+
+from platzky.config import Config
 from platzky.platzky import create_app_from_config
 
 
 def test_plugin_loader():
-    without_plugin_config_data = {
+    without_plugin_config_data: Dict[str, Any] = {
         "APP_NAME": "testingApp",
         "SECRET_KEY": "secret",
         "USE_WWW": False,
@@ -38,9 +40,10 @@ def test_plugin_loader():
     }
 
     with_plugin_config_data = copy.deepcopy(without_plugin_config_data)
-    with_plugin_config_data["DB"]["DATA"]["plugins"] = [
-        {"name": "redirections", "config": {"/page/test": "/page/test2"}}
-    ]
+    if isinstance(with_plugin_config_data["DB"]["DATA"], dict):
+        with_plugin_config_data["DB"]["DATA"]["plugins"] = [
+            {"name": "redirections", "config": {"/page/test": "/page/test2"}}
+        ]
 
     config_without_plugin = Config.model_validate(without_plugin_config_data)
     config_with_plugin = Config.model_validate(with_plugin_config_data)
@@ -48,9 +51,7 @@ def test_plugin_loader():
     app_without_plugin = create_app_from_config(config_without_plugin)
     app_with_plugin = create_app_from_config(config_with_plugin)
 
-    response = app_without_plugin.test_client().get(
-        "/page/test", follow_redirects=False
-    )
+    response = app_without_plugin.test_client().get("/page/test", follow_redirects=False)
     response2 = app_with_plugin.test_client().get("/page/test", follow_redirects=False)
 
     assert response.status_code == 200

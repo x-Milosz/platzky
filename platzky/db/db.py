@@ -1,10 +1,10 @@
+from abc import ABC, abstractmethod
 from functools import partial
 from typing import Any, Callable
 
 from pydantic import BaseModel, Field
 
-from abc import abstractmethod, ABC
-from ..models import MenuItem, Post, Page, Color
+from ..models import Color, MenuItem, Page, Post
 
 
 class DB(ABC):
@@ -28,7 +28,7 @@ class DB(ABC):
                     f"Method {name} defined in {cls.__name__} does not exist in superclasses"
                 )
 
-    def extend(self, function_name: str, function: Callable) -> None:
+    def extend(self, function_name: str, function: Callable[..., Any]) -> None:
         """
         Add a function to the DB object. The function must take the DB object as first parameter.
 
@@ -37,9 +37,7 @@ class DB(ABC):
         function (Callable): The function to add to the DB object.
         """
         if not callable(function):
-            raise ValueError(
-                f"The provided func for '{function_name}' is not callable."
-            )
+            raise ValueError(f"The provided func for '{function_name}' is not callable.")
         try:
             bound_function = partial(function, self)
             setattr(self, function_name, bound_function)
@@ -89,7 +87,7 @@ class DB(ABC):
         pass
 
     @abstractmethod
-    def get_plugins_data(self) -> list:
+    def get_plugins_data(self) -> list[Any]:
         pass
 
     @abstractmethod

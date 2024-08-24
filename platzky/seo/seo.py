@@ -1,6 +1,7 @@
 import typing as t
 import urllib.parse
 from os.path import dirname
+
 from flask import Blueprint, current_app, make_response, render_template, request
 
 
@@ -14,9 +15,7 @@ def create_seo_blueprint(db, config: dict[str, t.Any]):
 
     @seo.route("/robots.txt")
     def robots():
-        robots_response = render_template(
-            "robots.txt", domain=request.host, mimetype="text/plain"
-        )
+        robots_response = render_template("robots.txt", domain=request.host, mimetype="text/plain")
         response = make_response(robots_response)
         response.headers["Content-Type"] = "text/plain"
         return response
@@ -45,12 +44,8 @@ def create_seo_blueprint(db, config: dict[str, t.Any]):
         static_urls = list()
         for rule in current_app.url_map.iter_rules():
             if not str(rule).startswith("/admin") and not str(rule).startswith("/user"):
-                if (
-                    rule.methods is not None
-                    and "GET" in rule.methods
-                    and len(rule.arguments) == 0
-                ):
-                    url = {"loc": f"{host_base}{str(rule)}"}
+                if rule.methods is not None and "GET" in rule.methods and len(rule.arguments) == 0:
+                    url = {"loc": f"{host_base}{rule!s}"}
                     static_urls.append(url)
 
         # Dynamic routes with dynamic content

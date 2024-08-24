@@ -3,8 +3,8 @@ from typing import Any, Dict
 
 from pydantic import Field
 
-from .db import DB, DBConfig
 from ..models import MenuItem, Post
+from .db import DB, DBConfig
 
 
 def db_config_type():
@@ -51,9 +51,7 @@ class Json(DB):
     # TODO: add test for non-existing page
     def get_page(self, slug):
         list_of_pages = (
-            page
-            for page in self._get_site_content().get("pages")
-            if page["slug"] == slug
+            page for page in self._get_site_content().get("pages") if page["slug"] == slug
         )
         page = Post.model_validate(next(list_of_pages))
         return page
@@ -64,9 +62,7 @@ class Json(DB):
         return menu_items_list
 
     def get_posts_by_tag(self, tag, lang):
-        return (
-            post for post in self._get_site_content()["posts"] if tag in post["tags"]
-        )
+        return (post for post in self._get_site_content()["posts"] if tag in post["tags"])
 
     def _get_site_content(self):
         content = self.data.get("site_content")

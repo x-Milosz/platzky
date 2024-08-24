@@ -22,9 +22,7 @@ def db_from_config(config: GoogleJsonDbConfig):
 
 def get_db(config):
     google_json_db_config = GoogleJsonDbConfig.model_validate(config)
-    return GoogleJsonDb(
-        google_json_db_config.bucket_name, google_json_db_config.source_blob_name
-    )
+    return GoogleJsonDb(google_json_db_config.bucket_name, google_json_db_config.source_blob_name)
 
 
 def get_blob(bucket_name, source_blob_name):

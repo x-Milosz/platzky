@@ -35,9 +35,7 @@ def create_blog_blueprint(db, blog_prefix: str, locale_func):
     @blog.route("/feed", methods=["GET"])
     def get_feed():
         lang = locale_func()
-        response = make_response(
-            render_template("feed.xml", posts=db.get_all_posts(lang))
-        )
+        response = make_response(render_template("feed.xml", posts=db.get_all_posts(lang)))
         response.headers["Content-Type"] = "application/xml"
         return response
 

@@ -1,6 +1,7 @@
+from unittest.mock import MagicMock, mock_open, patch
+
 from platzky.config import Config
 from platzky.db import db_loader
-from unittest.mock import patch, mock_open, MagicMock
 
 
 def test_loading_json_db_dynamically():

@@ -1,7 +1,13 @@
+from typing import Any
+
 import pytest
 
-from platzky.db.json_db import Json
 from platzky.db.db import DB
+from platzky.db.json_db import Json
+
+
+def dummy_function_taking_one_argument(_: Any):
+    return "test"
 
 
 def test_db_extension():
@@ -32,9 +38,9 @@ def test_db_extension():
 
     # TODO remove ignores with proper plugin system
     with pytest.raises(AttributeError):
-
         db.test()  # type: ignore
-    db.extend("test", lambda x: "test")
+
+    db.extend("test", dummy_function_taking_one_argument)
     result = db.test()  # type: ignore
     assert result == "test"
 

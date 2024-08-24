@@ -5,8 +5,8 @@ from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 from pydantic import Field
 
-from .db import DB, DBConfig
 from ..models import Color, Post
+from .db import DB, DBConfig
 
 
 def db_config_type():
@@ -58,9 +58,7 @@ class GraphQL(DB):
         self.module_name = "graph_ql_db"
         self.db_name = "GraphQLDb"
         full_token = "bearer " + token
-        transport = AIOHTTPTransport(
-            url=endpoint, headers={"Authorization": full_token}
-        )
+        transport = AIOHTTPTransport(url=endpoint, headers={"Authorization": full_token})
         self.client = Client(transport=transport)
         super().__init__()
 
@@ -97,9 +95,7 @@ class GraphQL(DB):
             }
             """
         )
-        raw_ql_posts = self.client.execute(all_posts, variable_values={"lang": lang})[
-            "posts"
-        ]
+        raw_ql_posts = self.client.execute(all_posts, variable_values={"lang": lang})["posts"]
 
         return [Post.model_validate(_standarize_post(post)) for post in raw_ql_posts]
 
@@ -127,7 +123,7 @@ class GraphQL(DB):
                 slug
                 author {
                     name
-                }                
+                }
                 contentInRichText {
                   markdown
                   html
@@ -191,9 +187,7 @@ class GraphQL(DB):
             }
             """
         )
-        return self.client.execute(post, variable_values={"tag": tag, "lang": lang})[
-            "posts"
-        ]
+        return self.client.execute(post, variable_values={"tag": tag, "lang": lang})["posts"]
 
     def add_comment(self, author_name, comment, post_slug):
         add_comment = gql(
