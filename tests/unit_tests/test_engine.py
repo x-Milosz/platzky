@@ -163,3 +163,11 @@ def test_that_tag_has_proper_value(test_app, tag, subtag, value):
     soup = BeautifulSoup(response.data, "html.parser")
     assert getattr(soup, tag) is not None
     assert getattr(soup, tag).get(subtag) == value
+
+
+def test_that_logo_has_proper_alt_text(test_app):
+    response = test_app.test_client().get("/")
+    soup = BeautifulSoup(response.data, "html.parser")
+    logo_img = soup.find("img", class_="logo")
+    assert isinstance(logo_img, Tag)
+    assert logo_img.get("alt") == "testing App Name logo"
