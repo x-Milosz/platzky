@@ -171,3 +171,11 @@ def test_that_logo_has_proper_alt_text(test_app):
     logo_img = soup.find("img", class_="logo")
     assert isinstance(logo_img, Tag)
     assert logo_img.get("alt") == "testing App Name logo"
+
+
+def test_that_logo_link_has_proper_aria_label_text(test_app):
+    response = test_app.test_client().get("/")
+    soup = BeautifulSoup(response.data, "html.parser")
+    logo_link = soup.find("a", class_="navbar-brand")
+    assert isinstance(logo_link, Tag)
+    assert logo_link.get("aria-label") == "Link to the home page."
