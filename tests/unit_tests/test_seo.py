@@ -2,6 +2,7 @@ from unittest.mock import MagicMock
 
 from flask import Flask
 
+from platzky.models import Comment, Image, Post
 from platzky.seo import seo
 
 
@@ -10,7 +11,7 @@ def test_config_creation_with_incorrect_mappings():
     config_mock = MagicMock()
     config_mock.__getitem__.return_value = "/prefix"
 
-    seo_blueprint = seo.create_seo_blueprint(db_mock, config_mock)
+    seo_blueprint = seo.create_seo_blueprint(db_mock, config_mock, lambda: "en")
     app = Flask(__name__)
     app.config.update({"TESTING": True, "DEBUG": True})
     app.register_blueprint(seo_blueprint)
@@ -23,32 +24,33 @@ def test_config_creation_with_incorrect_mappings():
 def test_sitemap():
     db_mock = MagicMock()
     db_mock.get_all_posts.return_value = [
-        {
-            "title": "title",
-            "language": "en",
-            "slug": "slug",
-            "tags": ["tag/1"],
-            "contentInRichText": {"markdown": "content"},
-            "date": "2021-02-19",
-            "coverImage": {
-                "alternateText": "text which is alternative",
-                "image": {"url": "https://media.graphcms.com/XvmCDUjYTIq4c9wOIseo"},
-            },
-            "comments": [
-                {
-                    "time_delta": "10 months ago",
-                    "date": "2021-02-19T00:00:00",
-                    "comment": "komentarz",
-                    "author": "autor",
-                }
+        Post(
+            title="title",
+            language="en",
+            slug="slug",
+            tags=["tag/1"],
+            contentInMarkdown="content",
+            date="2021-02-19",
+            author="author",
+            excerpt="excerpt",
+            coverImage=Image(
+                alternateText="text which is alternative",
+                url="https://media.graphcms.com/XvmCDUjYTIq4c9wOIseo",
+            ),
+            comments=[
+                Comment(
+                    date="2021-02-19T00:00:00",
+                    comment="komentarz",
+                    author="autor",
+                )
             ],
-        }
+        )
     ]
     config_mock = MagicMock()
     config = {"SEO_PREFIX": "/prefix", "DOMAIN_TO_LANG": {"localhost": "en"}}
     config_mock.__getitem__.side_effect = config.__getitem__
 
-    seo_blueprint = seo.create_seo_blueprint(db_mock, config_mock)
+    seo_blueprint = seo.create_seo_blueprint(db_mock, config_mock, lambda: "en")
     app = Flask(__name__)
     app.config.update({"TESTING": True, "DEBUG": True})
     app.register_blueprint(seo_blueprint)
