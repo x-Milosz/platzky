@@ -172,6 +172,7 @@ def test_that_logo_has_proper_alt_text(test_app):
     assert isinstance(logo_img, Tag)
     assert logo_img.get("alt") == "testing App Name logo"
 
+
 def test_that_language_menu_has_proper_code(test_app):
     response = test_app.test_client().get("/")
     soup = BeautifulSoup(response.data, "html.parser")
