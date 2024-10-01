@@ -51,6 +51,18 @@
       color: white;
     }
 
+    .language-indicator-text {
+      color: white;
+      font-weight: normal;
+    }
+
+    #languages-menu {
+      background-color: {{ secondary_color }};
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: white;
+    }
+
     .offcanvas-lg.offcanvas-start {
       top: auto;
       width: auto;
@@ -67,11 +79,6 @@
 
     .dropdown-menu {
       z-index: 1;
-      background-color: rgb(232, 232, 232);
-    }
-
-    .dropdown-item:hover {
-      background-color: rgb(177, 177, 177);
     }
 
     .btn {
@@ -116,6 +123,7 @@
             <div id="language-dropdown" class="btn-group">
               <button type="button" class="nav-link dropdown-toggle btn btn-link" id="languages-menu" role="button"
                       data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="language-indicator-text">{{ current_language }}</i>
                 <i class="fi fi-{{ current_flag }}"></i>
               </button>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languages-menu">
