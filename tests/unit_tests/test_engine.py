@@ -171,3 +171,11 @@ def test_that_logo_has_proper_alt_text(test_app):
     logo_img = soup.find("img", class_="logo")
     assert isinstance(logo_img, Tag)
     assert logo_img.get("alt") == "testing App Name logo"
+
+
+def test_that_language_menu_has_proper_code(test_app):
+    response = test_app.test_client().get("/")
+    soup = BeautifulSoup(response.data, "html.parser")
+    language_menu = soup.find("span", class_="language-indicator-text")
+    assert isinstance(language_menu, Tag)
+    assert language_menu.get_text() == "en"
