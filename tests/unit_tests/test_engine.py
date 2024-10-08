@@ -189,4 +189,4 @@ def test_that_language_menu_has_proper_code(test_app):
 def test_that_page_has_proper_html_lang_attribute(test_app):
     response = test_app.test_client().get("/")
     soup = BeautifulSoup(response.data, "html.parser")
-    assert soup.html.get("lang") == "en-GB"
+    assert soup.html and soup.html.get("lang") == "en-GB"
