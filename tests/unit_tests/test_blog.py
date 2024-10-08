@@ -53,7 +53,7 @@ def test_app():
             "USE_WWW": False,
             "SEO_PREFIX": "/",
             "APP_NAME": "app name",
-            "LANGUAGES": {"en": {"name": "English", "flag": "uk", "domain": "localhost"}},
+            "LANGUAGES": {"en": {"name": "English", "flag": "uk", "domain": "localhost", "country": "GB"}},
             "DOMAIN_TO_LANG": {"localhost": "en"},
             "DB": {"TYPE": "json_file", "PATH": ""},
             "DEBUG": True,
