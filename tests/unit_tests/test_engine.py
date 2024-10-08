@@ -179,3 +179,13 @@ def test_that_language_menu_has_proper_code(test_app):
     language_menu = soup.find("span", class_="language-indicator-text")
     assert isinstance(language_menu, Tag)
     assert language_menu.get_text() == "en"
+
+
+# TODO: add test when language_switch_aria_label is filled
+# def test_that_language_switch_has_proper_aria_label_text(test_app):
+#     response = test_app.test_client().get("/")
+#     soup = BeautifulSoup(response.data, "html.parser")
+#     logo_link = soup.find("button", id="languages-menu")
+#     assert isinstance(logo_link, Tag)
+#     assert logo_link.get("aria-label") == "Language switch icon, used \
+#         to change the language of the website."
