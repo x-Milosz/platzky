@@ -14,7 +14,9 @@ def test_app():
         "USE_WWW": False,
         "BLOG_PREFIX": "/blog",
         "TRANSLATION_DIRECTORIES": ["/some/fake/dir"],
-        "LANGUAGES": {"en": {"name": "English", "flag": "uk", "domain": "localhost", "country": "GB"}},
+        "LANGUAGES": {
+            "en": {"name": "English", "flag": "uk", "domain": "localhost", "country": "GB"}
+        },
         "DB": {
             "TYPE": "json",
             "DATA": {
@@ -158,7 +160,9 @@ def test_that_default_page_title_is_app_name(test_app):
     assert soup.title.string == "testing App Name"
 
 
-@pytest.mark.parametrize("tag, subtag, value", [("link", "hreflang", "en"), ("html", "lang", "en-GB")])
+@pytest.mark.parametrize(
+    "tag, subtag, value", [("link", "hreflang", "en"), ("html", "lang", "en-GB")]
+)
 def test_that_tag_has_proper_value(test_app, tag, subtag, value):
     response = test_app.test_client().get("/")
     soup = BeautifulSoup(response.data, "html.parser")
