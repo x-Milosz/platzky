@@ -94,10 +94,12 @@ def create_engine(config: Config, db) -> Engine:
     def utils():
         locale = app.get_locale()
         flag = lang.flag if (lang := config.languages.get(locale)) is not None else ""
+        country = lang.country if (lang := config.languages.get(locale)) is not None else ""
         return {
             "app_name": config.app_name,
             "languages": languages_dict(config.languages),
             "current_flag": flag,
+            "current_lang_country": country,
             "current_language": locale,
             "url_link": url_link,
             "menu_items": app.db.get_menu_items(),
