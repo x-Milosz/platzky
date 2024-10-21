@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ current_language }}">
+<html lang="{{ current_language }}-{{ current_lang_country }}">
 <head>
   {% include "head_meta.html" %}
   {% block head_meta %}{% endblock %}
@@ -49,6 +49,7 @@
       max-width: 80vw;
       overflow-y: auto;
       color: white;
+      z-index: 999999999;
     }
 
     .language-indicator-text {

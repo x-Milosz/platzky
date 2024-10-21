@@ -9,8 +9,8 @@ def test_parse_template_config() -> None:
     langs_dict = languages_dict(config.languages)
 
     wanted_dict = {
-        "en": {"domain": None, "flag": "uk", "name": "English"},
-        "pl": {"domain": None, "flag": "pl", "name": "polski"},
+        "en": {"domain": None, "flag": "uk", "name": "English", "country": "GB"},
+        "pl": {"domain": None, "flag": "pl", "name": "polski", "country": "PL"},
     }
     assert langs_dict == wanted_dict
 
