@@ -15,6 +15,7 @@ class StrictBaseModel(BaseModel):
 class LanguageConfig(StrictBaseModel):
     name: str = Field(alias="name")
     flag: str = Field(alias="flag")
+    country: str = Field(alias="country")
     domain: t.Optional[str] = Field(default=None, alias="domain")
 
 
