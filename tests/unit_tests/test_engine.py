@@ -14,6 +14,9 @@ def test_app():
         "USE_WWW": False,
         "BLOG_PREFIX": "/blog",
         "TRANSLATION_DIRECTORIES": ["/some/fake/dir"],
+        "LANGUAGES": {
+            "en": {"name": "English", "flag": "uk", "domain": "localhost", "country": "GB"}
+        },
         "DB": {
             "TYPE": "json",
             "DATA": {
@@ -157,7 +160,9 @@ def test_that_default_page_title_is_app_name(test_app):
     assert soup.title.string == "testing App Name"
 
 
-@pytest.mark.parametrize("tag, subtag, value", [("link", "hreflang", "en"), ("html", "lang", "en")])
+@pytest.mark.parametrize(
+    "tag, subtag, value", [("link", "hreflang", "en"), ("html", "lang", "en-GB")]
+)
 def test_that_tag_has_proper_value(test_app, tag, subtag, value):
     response = test_app.test_client().get("/")
     soup = BeautifulSoup(response.data, "html.parser")
@@ -189,3 +194,8 @@ def test_that_language_menu_has_proper_code(test_app):
 #     assert isinstance(logo_link, Tag)
 #     assert logo_link.get("aria-label") == "Language switch icon, used \
 #         to change the language of the website."
+
+def test_that_page_has_proper_html_lang_attribute(test_app):
+    response = test_app.test_client().get("/")
+    soup = BeautifulSoup(response.data, "html.parser")
+    assert soup.html and soup.html.get("lang") == "en-GB"
