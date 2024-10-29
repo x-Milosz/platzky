@@ -5,6 +5,8 @@
   {% block head_meta %}{% endblock %}
   {{ dynamic_head | safe }}
 
+
+  
   <title>{% block title %}{{app_name}}{% endblock %}</title>
   <meta name="description" content=" {% block description %} {% endblock %} ">
   <style>
@@ -49,7 +51,14 @@
       max-width: 80vw;
       overflow-y: auto;
       color: white;
+      inline-size: 80vw;
+      overflow-wrap: break-word;
       z-index: 999999999;
+    }
+
+    @media only screen and (min-width: 768px) {
+      #left-panel {
+        inline-size: calc(100vw * 0.1666666667);
     }
 
     .language-indicator-text {
@@ -106,7 +115,8 @@
         <i class="fas fa-sliders-h"></i>
       </button>
       {% endif %}
-      <a class="navbar-brand" href="/">{% if logo_url %}<img src="{{ logo_url }}" alt="{{ app_name }} logo" class="logo">{% else %}{{_(app_name)}}{% endif %}</a>
+
+      <a class="navbar-brand" href="/" aria-label="{{_("Link to home page")}}">{% if logo_url %}<img src="{{ logo_url }}" alt="{{ app_name }} logo" class="logo">{% else %}{{_(app_name)}}{% endif %}</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
               aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars"></i>
@@ -123,7 +133,7 @@
           <li class="nav-item dropdown">
             <div id="language-dropdown" class="btn-group">
               <button type="button" class="nav-link dropdown-toggle btn btn-link" id="languages-menu" role="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
+                      data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ _("Language switch icon, used to change the language of the website")}}">
                 <span class="language-indicator-text">{{ current_language }}</i>
                 <i class="fi fi-{{ current_flag }}"></i>
               </button>
