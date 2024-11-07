@@ -42,6 +42,7 @@ class Config(StrictBaseModel):
     )
     debug: bool = Field(default=False, alias="DEBUG")
     testing: bool = Field(default=False, alias="TESTING")
+    feature_flags: dict[str, bool] = Field(default_factory=dict, alias="FEATURE_FLAGS")
 
     @classmethod
     def model_validate(
