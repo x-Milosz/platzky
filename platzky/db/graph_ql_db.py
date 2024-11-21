@@ -99,7 +99,7 @@ class GraphQL(DB):
 
         return [Post.model_validate(_standarize_post(post)) for post in raw_ql_posts]
 
-    def get_menu_items(self):
+    def get_menu_items(self, lang):
         menu_items = gql(
             """
             query MyQuery {
@@ -150,7 +150,7 @@ class GraphQL(DB):
         return Post.model_validate(_standarize_post(post_raw))
 
     # TODO Cleanup page logic of internationalization (now it depends on translation of slugs)
-    def get_page(self, slug):
+    def get_page(self, slug, lang):
         post = gql(
             """
             query MyQuery ($slug: String!){
@@ -217,7 +217,7 @@ class GraphQL(DB):
     def get_font(self):
         return str("")
 
-    def get_logo_url(self):
+    def get_logo_url(self, lang):
         logo = gql(
             """
             query myquery {

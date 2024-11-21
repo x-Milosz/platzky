@@ -16,24 +16,28 @@ def test_plugin_loader():
             "TYPE": "json",
             "DATA": {
                 "site_content": {
-                    "pages": [
-                        {
-                            "title": "test",
-                            "slug": "test",
-                            "excerpt": "test",
-                            "contentInMarkdown": "",
-                            "contentInRichText": "test",
-                            "comments": [],
-                            "tags": [],
-                            "coverImage": {
-                                "alternateText": "text which is alternative",
-                                "url": "https://media.graphcms.com/XvmCDUjYTIq4c9wOIseo",
-                            },
-                            "language": "en",
-                            "date": "2021-01-01",
-                            "author": "author",
+                    "internationalized": {
+                        "en": {
+                            "pages": [
+                                {
+                                    "title": "test",
+                                    "slug": "test",
+                                    "excerpt": "test",
+                                    "contentInMarkdown": "",
+                                    "contentInRichText": "test",
+                                    "comments": [],
+                                    "tags": [],
+                                    "coverImage": {
+                                        "alternateText": "text which is alternative",
+                                        "url": "https://media.graphcms.com/XvmCDUjYTIq4c9wOIseo",
+                                    },
+                                    "language": "en",
+                                    "date": "2021-01-01",
+                                    "author": "author",
+                                }
+                            ],
                         }
-                    ],
+                    }
                 }
             },
         },

@@ -1,5 +1,65 @@
 {
   "site_content": {
+    "internationalized": {
+      "pl": {
+        "pages": [
+          {
+            "title": "tytuł strony",
+            "author": "autor",
+            "slug": "page",
+            "contentInMarkdown": "zawartość strony",
+            "excerpt": "fragment strony",
+            "coverImage": {
+              "alternateText": "tekst alternatywny strony",
+              "url": "https://media.graphcms.com/XvmCDUjYTIq4c9wOIseo"
+            }
+          }
+        ],
+        "menu_items": [
+          {
+            "name": "Strona domowa",
+            "url": "/"
+          },
+          {
+            "name": "Drużyna pierścienia",
+            "url": "/fellows"
+          },
+          {
+            "name": "Nieistniejąca strona",
+            "url": "/non-existing"
+          }
+        ]
+      },
+      "en": {
+        "pages": [
+          {
+            "title": "page title",
+            "author": "autor",
+            "slug": "page",
+            "contentInMarkdown": "page content",
+            "excerpt": "page excerpt",
+            "coverImage": {
+              "alternateText": "alternate text",
+              "url": "https://media.graphcms.com/XvmCDUjYTIq4c9wOIseo"
+            }
+          }
+        ],
+        "menu_items": [
+          {
+            "name": "Home",
+            "url": "/"
+          },
+          {
+            "name": "The Fellowship of the Ring",
+            "url": "/fellows"
+          },
+          {
+            "name": "Non-existing page",
+            "url": "/non-existing"
+          }
+        ]
+      }
+    },
     "posts": [
       {
         "title": "The Fellowship of the Ring",
@@ -76,33 +136,6 @@
             "date": "2024-05-21T01:54:20"
           }
         ]
-      }
-    ],
-    "pages": [
-      {
-        "title": "page title",
-        "author": "autor",
-        "slug": "page",
-        "contentInMarkdown": "page content",
-        "excerpt": "page excerpt",
-        "coverImage": {
-          "alternateText": "alternate text",
-          "url": "https://media.graphcms.com/XvmCDUjYTIq4c9wOIseo"
-        }
-      }
-    ],
-    "menu_items": [
-      {
-        "name": "Home",
-        "url": "/"
-      },
-      {
-        "name": "The Fellowship of the Ring",
-        "url": "/fellows"
-      },
-      {
-        "name": "Non-existing page",
-        "url": "/non-existing"
       }
     ],
     "redirections": {

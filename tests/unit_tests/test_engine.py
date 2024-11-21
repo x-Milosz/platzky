@@ -15,30 +15,55 @@ def test_app():
         "BLOG_PREFIX": "/blog",
         "TRANSLATION_DIRECTORIES": ["/some/fake/dir"],
         "LANGUAGES": {
-            "en": {"name": "English", "flag": "uk", "domain": "localhost", "country": "GB"}
+            "en": {"name": "English", "flag": "uk", "domain": "localhost", "country": "GB"},
+            "pl": {"name": "Polski", "flag": "pl", "domain": "localhost", "country": "PL"},
         },
         "DB": {
             "TYPE": "json",
             "DATA": {
                 "site_content": {
-                    "logo_url": "https://example.com/logo.png",
-                    "pages": [
-                        {
-                            "title": "test",
-                            "slug": "test",
-                            "contentInMarkdown": "",
-                            "contentInRichText": "test",
-                            "comments": [],
-                            "tags": [],
-                            "coverImage": {
-                                "alternateText": "text which is alternative",
-                                "url": "https://media.graphcms.com/XvmCDUjYTIq4c9wOIseo",
-                            },
-                            "language": "en",
-                            "date": "2021-01-01",
-                            "author": "author",
-                        }
-                    ],
+                    "internationalized": {
+                        "en": {
+                            "logo_url": "https://example.com/logo.png",
+                            "pages": [
+                                {
+                                    "title": "test",
+                                    "slug": "test",
+                                    "contentInMarkdown": "",
+                                    "contentInRichText": "test",
+                                    "comments": [],
+                                    "tags": [],
+                                    "coverImage": {
+                                        "alternateText": "text which is alternative",
+                                        "url": "https://media.graphcms.com/XvmCDUjYTIq4c9wOIseo",
+                                    },
+                                    "language": "en",
+                                    "date": "2021-01-01",
+                                    "author": "author",
+                                }
+                            ],
+                        },
+                        "pl": {
+                            "logo_url": "https://example.com/logo.png?lang=pl",
+                            "pages": [
+                                {
+                                    "title": "test",
+                                    "slug": "test",
+                                    "contentInMarkdown": "",
+                                    "contentInRichText": "test pl",
+                                    "comments": [],
+                                    "tags": [],
+                                    "coverImage": {
+                                        "alternateText": "text which is alternative",
+                                        "url": "https://media.graphcms.com/XvmCDUjYTIq4c9wOIseo",
+                                    },
+                                    "language": "en",
+                                    "date": "2021-01-01",
+                                    "author": "author",
+                                }
+                            ],
+                        },
+                    }
                 }
             },
         },
@@ -65,7 +90,7 @@ def test_logo_has_set_src(test_app):
 
 
 def test_if_name_is_shown_if_there_is_no_logo(test_app):
-    test_app.db.data["site_content"].pop("logo_url")
+    test_app.db.data["site_content"]["internationalized"]["en"].pop("logo_url")
     app = test_app.test_client()
     response = app.get("/")
     soup = BeautifulSoup(response.data, "html.parser")
@@ -209,3 +234,11 @@ def test_that_page_has_proper_html_lang_attribute(test_app):
     response = test_app.test_client().get("/")
     soup = BeautifulSoup(response.data, "html.parser")
     assert soup.html and soup.html.get("lang") == "en-GB"
+
+
+def test_that_internationalization_works(test_app):
+    response = test_app.test_client().get("/", headers={"Accept-Language": "pl-PL"})
+    soup = BeautifulSoup(response.data, "html.parser")
+    logo_img = soup.find("img", class_="logo")
+    assert isinstance(logo_img, Tag)
+    assert logo_img.get("src") == "https://example.com/logo.png?lang=pl"
