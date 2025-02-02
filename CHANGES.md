@@ -1,3 +1,14 @@
+# Version 0.2.15
+Released on 2025-02-02
+
+- fix: plugins loading
+
+# Version 0.2.14
+Released on 2025-01-22
+
+- fix: plugins loading
+
+
 # Version 0.2.13
 Released on 2024-11-30
 
