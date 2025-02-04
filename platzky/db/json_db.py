@@ -24,12 +24,21 @@ def db_from_config(config: JsonDbConfig):
     return Json(config.data)
 
 
+# TODO make all language specific methods to be available without language
+# this will allow to have a default language and if there is one language
+# there will be no need to pass it to the method or in db
+
+
 class Json(DB):
     def __init__(self, data: Dict[str, Any]):
         super().__init__()
         self.data: Dict[str, Any] = data
         self.module_name = "json_db"
         self.db_name = "JsonDb"
+
+    def get_app_description(self, lang):
+        description = self._get_site_content().get("app_description", {})
+        return description.get(lang, None)
 
     def get_all_posts(self, lang):
         return [

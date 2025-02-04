@@ -1,3 +1,8 @@
+# Version 0.2.16
+Released on 2025-02-05
+
+- feature: added app_description for applications
+
 # Version 0.2.15
 Released on 2025-02-02
 

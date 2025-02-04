@@ -102,6 +102,7 @@ def create_engine(config: Config, db) -> Engine:
         country = lang.country if (lang := config.languages.get(locale)) is not None else ""
         return {
             "app_name": config.app_name,
+            "app_description": app.db.get_app_description(locale) or config.app_name,
             "languages": languages_dict(config.languages),
             "current_flag": flag,
             "current_lang_country": country,

@@ -1,5 +1,9 @@
 {
   "site_content": {
+    "app_description":{
+        "en": "This is not only blogging platform",
+        "pl": "To nie tylko platforma do blogowania"
+    },
     "posts": [
       {
         "title": "The Fellowship of the Ring",

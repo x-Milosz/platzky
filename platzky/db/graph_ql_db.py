@@ -259,6 +259,21 @@ class GraphQL(DB):
         except IndexError:
             return ""
 
+    def get_app_description(self, lang):
+        description_query = gql(
+            """
+            query myquery($lang: Lang!) {
+              applicationSetups(where: {language: $lang}, stage: PUBLISHED) {
+                applicationDescription
+              }
+            }
+            """
+        )
+
+        return self.client.execute(description_query, variable_values={"lang": lang})[
+            "applicationSetups"
+        ][0].get("applicationDescription", None)
+
     def get_favicon_url(self):
         favicon = gql(
             """
