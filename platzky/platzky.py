@@ -1,71 +1,20 @@
-import os
 import typing as t
 import urllib.parse
 
-from flask import Flask, redirect, render_template, request, session
-from flask_babel import Babel
+from flask import redirect, render_template, request, session
 from flask_minify import Minify
 
-from .blog import blog
-from .config import (
+from platzky.admin import admin
+from platzky.blog import blog
+from platzky.config import (
     Config,
     languages_dict,
 )
-from .db.db_loader import get_db
-from .plugin_loader import plugify
-from .seo import seo
-from .www_handler import redirect_nonwww_to_www, redirect_www_to_nonwww
-
-
-class Engine(Flask):
-    def __init__(self, config: Config, db, import_name):
-        super().__init__(import_name)
-        self.config.from_mapping(config.model_dump(by_alias=True))
-        self.db = db
-        self.notifiers = []
-        self.dynamic_body = ""
-        self.dynamic_head = ""
-        directory = os.path.dirname(os.path.realpath(__file__))
-        locale_dir = os.path.join(directory, "locale")
-        config.translation_directories.append(locale_dir)
-
-        babel_translation_directories = ";".join(config.translation_directories)
-        self.babel = Babel(
-            self,
-            locale_selector=self.get_locale,
-            default_translation_directories=babel_translation_directories,
-        )
-
-    def notify(self, message: str):
-        for notifier in self.notifiers:
-            notifier(message)
-
-    def add_notifier(self, notifier):
-        self.notifiers.append(notifier)
-
-    def add_dynamic_body(self, body: str):
-        self.dynamic_body += body
-
-    def add_dynamic_head(self, body: str):
-        self.dynamic_head += body
-
-    def get_locale(self) -> str:
-        domain = request.headers["Host"]
-        domain_to_lang = self.config.get("DOMAIN_TO_LANG")
-
-        languages = self.config.get("LANGUAGES", {}).keys()
-        backup_lang = session.get(
-            "language",
-            request.accept_languages.best_match(languages, "en"),
-        )
-
-        if domain_to_lang:
-            lang = domain_to_lang.get(domain, backup_lang)
-        else:
-            lang = backup_lang
-
-        session["language"] = lang
-        return lang
+from platzky.db.db_loader import get_db
+from platzky.engine import Engine
+from platzky.plugin.plugin_loader import plugify
+from platzky.seo import seo
+from platzky.www_handler import redirect_nonwww_to_www, redirect_www_to_nonwww
 
 
 def create_engine(config: Config, db) -> Engine:
@@ -102,6 +51,7 @@ def create_engine(config: Config, db) -> Engine:
         country = lang.country if (lang := config.languages.get(locale)) is not None else ""
         return {
             "app_name": config.app_name,
+            "app_description": app.db.get_app_description(locale) or config.app_name,
             "languages": languages_dict(config.languages),
             "current_flag": flag,
             "current_lang_country": country,
@@ -132,6 +82,9 @@ def create_engine(config: Config, db) -> Engine:
 
 def create_app_from_config(config: Config) -> Engine:
     engine = create_engine_from_config(config)
+    admin_blueprint = admin.create_admin_blueprint(
+        login_methods=engine.login_methods, db=engine.db, locale_func=engine.get_locale
+    )
     blog_blueprint = blog.create_blog_blueprint(
         db=engine.db,
         blog_prefix=config.blog_prefix,
@@ -140,6 +93,7 @@ def create_app_from_config(config: Config) -> Engine:
     seo_blueprint = seo.create_seo_blueprint(
         db=engine.db, config=engine.config, locale_func=engine.get_locale
     )
+    engine.register_blueprint(admin_blueprint)
     engine.register_blueprint(blog_blueprint)
     engine.register_blueprint(seo_blueprint)
 

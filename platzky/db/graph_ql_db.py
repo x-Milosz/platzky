@@ -6,8 +6,8 @@ from gql.transport.aiohttp import AIOHTTPTransport
 from gql.transport.exceptions import TransportQueryError
 from pydantic import Field
 
-from ..models import Color, Post
-from .db import DB, DBConfig
+from platzky.db.db import DB, DBConfig
+from platzky.models import Color, Post
 
 
 def db_config_type():
@@ -29,7 +29,7 @@ def db_from_config(config: GraphQlDbConfig):
 
 def _standarize_comment(
     comment,
-):  # TODO add tests for checking stadarization of comments
+):
     return {
         "author": comment["author"],
         "comment": comment["comment"],
@@ -37,7 +37,7 @@ def _standarize_comment(
     }
 
 
-def _standarize_post(post):  # TODO add tests for checking stadarization of posts
+def _standarize_post(post):
     return {
         "author": post["author"]["name"],
         "slug": post["slug"],
@@ -258,6 +258,21 @@ class GraphQL(DB):
             return self.client.execute(logo)["logos"][0]["logo"]["image"]["url"]
         except IndexError:
             return ""
+
+    def get_app_description(self, lang):
+        description_query = gql(
+            """
+            query myquery($lang: Lang!) {
+              applicationSetups(where: {language: $lang}, stage: PUBLISHED) {
+                applicationDescription
+              }
+            }
+            """
+        )
+
+        return self.client.execute(description_query, variable_values={"lang": lang})[
+            "applicationSetups"
+        ][0].get("applicationDescription", None)
 
     def get_favicon_url(self):
         favicon = gql(

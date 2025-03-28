@@ -4,7 +4,7 @@ from typing import Any, Callable
 
 from pydantic import BaseModel, Field
 
-from ..models import Color, MenuItem, Page, Post
+from platzky.models import Color, MenuItem, Page, Post
 
 
 class DB(ABC):
@@ -43,6 +43,10 @@ class DB(ABC):
             setattr(self, function_name, bound_function)
         except Exception as e:
             raise ValueError(f"Failed to extend DB with function {function_name}: {e}")
+
+    @abstractmethod
+    def get_app_description(self, lang) -> str:
+        pass
 
     @abstractmethod
     def get_all_posts(self, lang) -> list[Post]:

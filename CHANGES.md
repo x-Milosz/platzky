@@ -1,3 +1,43 @@
+# Version 0.3.1
+Released on 2025-03-15
+
+- feat: Added a new plugin loading mechanism to manage and process plugins effectively.
+
+
+# Version 0.3.0
+Released on 2025-02-19
+
+- removed deprecated plugins import (now they are only loaded if they are installed)
+
+
+# Version 0.2.18
+Released on 2025-02-06
+
+- fix: UTF emails working
+
+
+# Version 0.2.17
+Released on 2025-02-05
+
+- fix: fixed dynamic css
+
+
+# Version 0.2.16
+Released on 2025-02-05
+
+- feature: added app_description for applications
+
+# Version 0.2.15
+Released on 2025-02-02
+
+- fix: plugins loading
+
+# Version 0.2.14
+Released on 2025-01-22
+
+- fix: plugins loading
+
+
 # Version 0.2.13
 Released on 2024-11-30
 

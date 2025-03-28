@@ -1,0 +1,60 @@
+html,
+body {
+  height: 100%;
+}
+
+.logo {
+  max-height: 6rem;
+  max-width: 50vw;
+}
+
+#main-row {
+  position: relative;
+  flex-grow: 1;
+  z-index: 0;
+}
+
+.left-panel-contents {
+  padding: 16px;
+}
+
+@media only screen and (min-width: 768px) {
+  #left-panel {
+    inline-size: calc(100vw * 0.1666666667);
+  }
+}
+
+.language-indicator-text {
+  color: white;
+  font-weight: normal;
+}
+
+.offcanvas-lg.offcanvas-start {
+  top: auto;
+  width: auto;
+}
+
+#filter-form form > div {
+  padding-bottom: 1rem;
+}
+
+#filter-form form div > span {
+  font-weight: bold;
+  padding-bottom: 0.5rem;
+}
+
+.dropdown-menu {
+  z-index: 1;
+}
+
+.btn {
+  padding: 0;
+}
+
+.btn-close {
+  opacity: 1;
+}
+
+i.fi {
+  margin: 0 0.5em;
+}
